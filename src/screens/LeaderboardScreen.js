@@ -9,7 +9,9 @@ export default function LeaderboardScreen() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadLeaderboard();
+    if (user?.id) {
+      loadLeaderboard();
+    }
   }, [user]);
 
   const loadLeaderboard = async () => {

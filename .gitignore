@@ -28,6 +28,11 @@ build/
 .idea
 .gradle
 local.properties
+/android/keystore.properties
+/android/android/
+/android/app/src/main/assets/index.android.bundle
+/android/app/src/main/res/drawable-*/node_modules_*
+/android/app/src/main/res/raw/keep.xml
 *.iml
 *.hprof
 .cxx/
@@ -65,6 +70,10 @@ yarn-error.log
 
 # testing
 /coverage
+
+# local secrets / data
+/play-account.json
+/giftpoint.db
 
 # Yarn
 .yarn/*

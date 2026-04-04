@@ -9,12 +9,13 @@ export default function SettingsScreen() {
   const { settings, updateSettings } = useSettings();
 
   const handleToggle = async (key, value) => {
+    if (!user?.id) return;
     const newSettings = { ...settings, [key]: value };
     updateSettings(newSettings);
     try {
       await api.saveSettings(user.id, newSettings);
     } catch (error) {
-      console.error('Settings save error:', error);
+      console.log('Settings save failed (offline mode):', error.message);
     }
   };
 
@@ -27,7 +28,7 @@ export default function SettingsScreen() {
         <View style={styles.row}>
           <Text style={styles.label}>푸시 알림</Text>
           <Switch
-            value={settings.notifications}
+            value={settings?.notifications ?? true}
             onValueChange={(value) => handleToggle('notifications', value)}
           />
         </View>
@@ -39,7 +40,7 @@ export default function SettingsScreen() {
         <View style={styles.row}>
           <Text style={styles.label}>다크 모드</Text>
           <Switch
-            value={settings.darkMode}
+            value={settings?.darkMode ?? false}
             onValueChange={(value) => handleToggle('darkMode', value)}
           />
         </View>

@@ -9,7 +9,9 @@ export default function AchievementScreen() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadAchievements();
+    if (user?.id) {
+      loadAchievements();
+    }
   }, [user]);
 
   const loadAchievements = async () => {

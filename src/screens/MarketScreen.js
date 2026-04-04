@@ -16,31 +16,36 @@ export default function MarketScreen() {
   const loadGiftcards = async () => {
     try {
       const data = await api.getGiftcards();
-      if (data && data.cards) {
+      if (data && Array.isArray(data.cards)) {
         setGiftcards(data.cards.map((card, index) => ({
           id: card.id || `card_${index}`,
-          name: card.name || card.title,
-          price: card.price || card.point_price,
+          name: card.name || card.title || '기프트카드',
+          price: card.price || card.point_price || 0,
           image: card.image_url || 'https://via.placeholder.com/150',
-          description: card.description || `${card.name || '기프트카드'} 입니다.`
+          description: card.description || `${card.name || '기프트카드'}입니다.`
         })));
+      } else {
+        setGiftcards(getMockGiftcards());
       }
     } catch (error) {
-      console.error('Load giftcards error:', error);
-      const mockGiftcards = [
-        { id: '1', name: '스타벅스 아메리카노', price: 500, image: 'https://via.placeholder.com/150', description: '스타벅스에서 아메리카노(R) 1잔을兑换할 수 있는 기프트카드입니다.' },
-        { id: '2', name: 'CU 1000원 상품권', price: 1000, image: 'https://via.placeholder.com/150', description: 'CU 편의점에서 1000원 상당의 상품과 교환할 수 있습니다.' },
-        { id: '3', name: '배달의민족 2000원 쿠폰', price: 2000, image: 'https://via.placeholder.com/150', description: '배달의민족 주문 시 2000원 할인받을 수 있는 쿠폰입니다.' },
-        { id: '4', name: 'GS25 5000원 상품권', price: 5000, image: 'https://via.placeholder.com/150', description: 'GS25 편의점에서 5000원 상당의 상품과 교환할 수 있습니다.' },
-      ];
-      setGiftcards(mockGiftcards);
+      console.log('Giftcards API failed, using mock data');
+      setGiftcards(getMockGiftcards());
     } finally {
       setGiftLoading(false);
     }
   };
 
+  const getMockGiftcards = () => [
+    { id: '1', name: '스타벅스 아메리카노', price: 500, image: 'https://via.placeholder.com/150', description: '스타벅스에서 아메리카노 1잔을 교환할 수 있는 기프트카드입니다.' },
+    { id: '2', name: 'CU 1000원 상품권', price: 1000, image: 'https://via.placeholder.com/150', description: 'CU 편의점에서 1000원 상당의 상품과 교환할 수 있습니다.' },
+    { id: '3', name: '배달의민족 2000원 쿠폰', price: 2000, image: 'https://via.placeholder.com/150', description: '배달의민족 주문 시 2000원 할인받을 수 있는 쿠폰입니다.' },
+    { id: '4', name: 'GS25 5000원 상품권', price: 5000, image: 'https://via.placeholder.com/150', description: 'GS25 편의점에서 5000원 상당의 상품과 교환할 수 있습니다.' },
+  ];
+
   const purchaseGiftcard = async () => {
-    if (user.points < selectedCard.price) {
+    if (!user || !selectedCard) return;
+
+    if ((user.points || 0) < selectedCard.price) {
       Alert.alert('포인트 부족', '포인트가 부족합니다. 광고를 보고 포인트를 적립하세요!');
       return;
     }
@@ -55,7 +60,9 @@ export default function MarketScreen() {
           onPress: async () => {
             try {
               const result = await api.purchaseGiftcard(user.id, selectedCard.id, selectedCard.name, selectedCard.price);
-              setUser(result.user);
+              if (result && result.user) {
+                setUser(result.user);
+              }
               Alert.alert('구매 완료!', `${selectedCard.name}이(가) 구매되었습니다.`);
               setSelectedCard(null);
             } catch (error) {

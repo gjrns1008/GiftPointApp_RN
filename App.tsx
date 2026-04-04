@@ -1,4 +1,5 @@
 import React from 'react';
+import { Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -23,8 +24,21 @@ export default function App() {
           <NavigationContainer>
             <Tab.Navigator
               screenOptions={{
-                tabBarStyle: { height: 60, paddingBottom: 8 },
-                tabBarLabelStyle: { fontSize: 11 }
+                tabBarStyle: { height: 65, paddingBottom: 8 },
+                tabBarLabelStyle: { fontSize: 11 },
+                tabBarIcon: ({ route }) => {
+                  const icons: Record<string, string> = {
+                    '홈': '🏠',
+                    '포인트': '💰',
+                    '마켓': '🛒',
+                    '프로필': '👤',
+                    '업적': '🏆',
+                    '랭킹': '📊',
+                    '초대': '📨',
+                    '설정': '⚙️',
+                  };
+                  return <Text style={{ fontSize: 22 }}>{icons[route?.name] || '📱'}</Text>;
+                }
               }}
             >
               <Tab.Screen name="홈" component={HomeScreen} />

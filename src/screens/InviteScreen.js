@@ -11,7 +11,9 @@ export default function InviteScreen() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadData();
+    if (user?.id) {
+      loadData();
+    }
   }, [user]);
 
   const loadData = async () => {
